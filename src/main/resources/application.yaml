@@ -19,10 +19,19 @@ spring:
     #tcp: jdbc:h2:tcp://localhost:9092/Users/fuat/IdeaProjects/voting_system/db
     username: sa
     password:
+
   h2:
     console:
       enabled: true
+
   data:
     rest:
       base-path: /api
       return-body-on-create: true
+
+  #jackson:
+    #visibility:
+      #field: any
+      #getter: none
+      #setter: none
+      #is-getter: none

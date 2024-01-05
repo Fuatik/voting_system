@@ -1,5 +1,6 @@
 package com.example.voting_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
@@ -24,6 +25,7 @@ public class BaseEntity implements Persistable<Integer> {
         return id;
     }
 
+    @JsonIgnore
     @Override
     public boolean isNew() {
         return id == null;
