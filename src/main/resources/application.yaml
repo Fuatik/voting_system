@@ -29,9 +29,14 @@ spring:
       base-path: /api
       return-body-on-create: true
 
-  #jackson:
-    #visibility:
-      #field: any
-      #getter: none
-      #setter: none
-      #is-getter: none
+  security:
+    user:
+      name: user
+      password: password
+      roles: USER
+
+logging:
+  level:
+    root: warn
+    com.example.voting_system: debug
+    org.springframework.security.web.FilterChainProxy: debug
