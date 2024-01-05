@@ -11,6 +11,7 @@ spring:
         jdbc:
           batch_size: 20
     defer-datasource-initialization: true
+
   datasource:
     url: jdbc:h2:mem:voting
     #tcp: jdbc:h2:tcp://localhost:9092/mem:voting
@@ -21,3 +22,7 @@ spring:
   h2:
     console:
       enabled: true
+  data:
+    rest:
+      base-path: /api
+      return-body-on-create: true
