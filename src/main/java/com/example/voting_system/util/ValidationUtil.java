@@ -2,7 +2,9 @@ package com.example.voting_system.util;
 
 import com.example.voting_system.error.IllegalRequestDataException;
 import com.example.voting_system.model.BaseEntity;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class ValidationUtil {
 
     public static void checkNew(BaseEntity entity) {
