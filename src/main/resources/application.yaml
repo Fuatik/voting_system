@@ -28,6 +28,7 @@ spring:
     rest:
       base-path: /api
       return-body-on-create: true
+      default-page-size: 20
 
 #  security:
 #    user:
@@ -40,3 +41,9 @@ logging:
     root: warn
     com.example.voting_system: debug
 #    org.springframework.security.web.FilterChainProxy: debug
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
