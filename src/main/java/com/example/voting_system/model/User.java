@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -21,11 +22,10 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"password"})
 public class User extends BaseEntity implements Serializable {
     @Column(name = "email", nullable = false, unique = true)
     @Email
-    @NotEmpty
+    @NotBlank
     @Size(max = 128)
     private String email;
 
@@ -44,17 +44,24 @@ public class User extends BaseEntity implements Serializable {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "user_roles_unique")})
+    @CollectionTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role")})
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     public User(Integer id, String email, String firstName, String lastName, String password, Collection<Role> roles) {
-        this(email, firstName, lastName, password, EnumSet.copyOf(roles));
+        this(email, firstName, lastName, password, roles.isEmpty() ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles));
         this.id = id;
     }
 
     public void setEmail(String email) {
         this.email = StringUtils.hasText(email) ? null : email.toLowerCase();
+    }
+
+    @Override
+    public String toString() {
+        return "User:" + id + '[' + email + ']';
     }
 }

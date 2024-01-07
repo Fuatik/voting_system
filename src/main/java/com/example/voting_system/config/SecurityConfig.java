@@ -1,17 +1,17 @@
 package com.example.voting_system.config;
 
-import com.example.voting_system.AuthUser;
+import com.example.voting_system.web.AuthUser;
 import com.example.voting_system.model.Role;
 import com.example.voting_system.model.User;
 import com.example.voting_system.repository.UserRepository;
 import com.example.voting_system.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,10 +31,10 @@ import java.util.Optional;
 public class SecurityConfig {
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper;
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    @PostConstruct
-    void setMapper() {
+    @Autowired
+    private void setMapper(ObjectMapper objectMapper) {
         JsonUtil.setObjectMapper(objectMapper);
     }
 
@@ -44,13 +44,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsServiceBean() {
         return email -> {
-            log.debug("Authenticating {}", email);
-            Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email.toLowerCase());
+            log.debug("Authenticating '{}'", email);
+            Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
             return new AuthUser(optionalUser.orElseThrow(
-                    () -> new UsernameNotFoundException("User '" + email + "' was not found")
-            ));
+                    () -> new UsernameNotFoundException("User '" + email + "' was not found")));
         };
     }
 
@@ -58,10 +57,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/api/**").authorizeHttpRequests(authz ->
                         authz.requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
-                                .requestMatchers("api/account/register").anonymous()
-                                .requestMatchers("/api/account").hasRole(Role.USER.name())
-                )
-                .httpBasic(Customizer.withDefaults())
+                                .requestMatchers(HttpMethod.POST, "/api/profile").anonymous()
+                                .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/api/**").authenticated())
+                .httpBasic(hbc -> hbc.authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable);
         return http.build();

@@ -24,6 +24,11 @@ spring:
     console:
       enabled: true
 
+  cache:
+    cache-names: users
+    caffeine:
+      spec: maximumSize=5000,expireAfterAccess=60s
+
   data:
     rest:
       base-path: /api
@@ -40,7 +45,8 @@ logging:
   level:
     root: warn
     com.example.voting_system: debug
-#    org.springframework.security.web.FilterChainProxy: debug
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
+
 server:
   servlet:
     encoding:

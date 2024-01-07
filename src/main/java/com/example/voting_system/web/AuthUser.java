@@ -1,4 +1,4 @@
-package com.example.voting_system;
+package com.example.voting_system.web;
 
 import com.example.voting_system.model.User;
 import lombok.Getter;
