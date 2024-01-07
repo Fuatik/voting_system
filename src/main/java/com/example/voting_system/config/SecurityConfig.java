@@ -4,6 +4,9 @@ import com.example.voting_system.AuthUser;
 import com.example.voting_system.model.Role;
 import com.example.voting_system.model.User;
 import com.example.voting_system.repository.UserRepository;
+import com.example.voting_system.util.JsonUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +30,13 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SecurityConfig {
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
+
+    @PostConstruct
+    void setMapper() {
+        JsonUtil.setObjectMapper(objectMapper);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

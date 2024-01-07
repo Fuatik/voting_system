@@ -11,6 +11,8 @@ import lombok.*;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Set;
 
 @Entity
@@ -46,6 +48,11 @@ public class User extends BaseEntity implements Serializable {
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    public User(Integer id, String email, String firstName, String lastName, String password, Collection<Role> roles) {
+        this(email, firstName, lastName, password, EnumSet.copyOf(roles));
+        this.id = id;
+    }
 
     public void setEmail(String email) {
         this.email = StringUtils.hasText(email) ? null : email.toLowerCase();
