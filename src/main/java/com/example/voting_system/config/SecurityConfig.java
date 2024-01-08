@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,13 +25,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.Optional;
 
-import static com.example.voting_system.util.UserUtil.PASSWORD_ENCODER;
-
 @Configuration
 @EnableWebSecurity
 @Slf4j
 @AllArgsConstructor
 public class SecurityConfig {
+    public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     private final UserRepository userRepository;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
@@ -53,6 +53,13 @@ public class SecurityConfig {
             return new AuthUser(optionalUser.orElseThrow(
                     () -> new UsernameNotFoundException("User '" + email + "' was not found")));
         };
+    }
+
+    //  https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter#configuring-websecurity
+    //  https://stackoverflow.com/a/61147599/548473
+    @Bean
+    WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers("/", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**");
     }
 
     @Bean

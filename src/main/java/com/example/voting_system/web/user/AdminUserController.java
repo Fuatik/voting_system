@@ -2,7 +2,6 @@ package com.example.voting_system.web.user;
 
 import com.example.voting_system.model.User;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,13 +18,12 @@ import static com.example.voting_system.util.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-@Slf4j
 public class AdminUserController extends AbstractUserController {
     static final String REST_URL = "/api/admin/users";
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<User> get(@PathVariable int id) {
+    public User get(@PathVariable int id) {
         return super.get(id);
     }
 
@@ -46,7 +44,7 @@ public class AdminUserController extends AbstractUserController {
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
         log.info("create {}", user);
         checkNew(user);
-        User created = prepareAndSave(user);
+        User created = repository.prepareAndSave(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -58,13 +56,13 @@ public class AdminUserController extends AbstractUserController {
     public void update(@Valid @RequestBody User user, @PathVariable int id) {
         log.info("update {} with id={}", user, id);
         assureIdConsistent(user, id);
-        prepareAndSave(user);
+        repository.prepareAndSave(user);
     }
 
     @GetMapping("/by-email")
-    public ResponseEntity<User> getByEmail(@RequestParam String email) {
+    public User getByEmail(@RequestParam String email) {
         log.info("getByEmail {}", email);
-        return ResponseEntity.of(repository.findByEmailIgnoreCase(email));
+        return repository.getExistedByEmail(email);
     }
 
     @PatchMapping("/{id}")
@@ -72,7 +70,7 @@ public class AdminUserController extends AbstractUserController {
     @Transactional
     public void enable(@PathVariable int id, @RequestParam boolean enabled) {
         log.info(enabled ? "enable {}" : "disable {}", id);
-        User user = repository.getById(id);
+        User user = repository.getExisted(id);
         user.setEnabled(enabled);
     }
 }

@@ -2,7 +2,7 @@ package com.example.voting_system.web.user;
 
 import com.example.voting_system.model.User;
 import com.example.voting_system.to.UserTo;
-import com.example.voting_system.util.UserUtil;
+import com.example.voting_system.util.UsersUtil;
 import com.example.voting_system.web.AuthUser;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +27,7 @@ public class ProfileController extends AbstractUserController {
 
     @GetMapping
     public User get(@AuthenticationPrincipal AuthUser authUser) {
+        log.info("get {}", authUser);
         return authUser.getUser();
     }
 
@@ -41,7 +42,7 @@ public class ProfileController extends AbstractUserController {
     public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
         log.info("register {}", userTo);
         checkNew(userTo);
-        User created = prepareAndSave(UserUtil.createNewFromTo(userTo));
+        User created = repository.prepareAndSave(UsersUtil.createNewFromTo(userTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
@@ -53,6 +54,6 @@ public class ProfileController extends AbstractUserController {
     public void update(@Valid @RequestBody UserTo userTo, @AuthenticationPrincipal AuthUser authUser) {
         assureIdConsistent(userTo, authUser.id());
         User user = authUser.getUser();
-        prepareAndSave(UserUtil.updateFromTo(user, userTo));
+        repository.prepareAndSave(UsersUtil.updateFromTo(user, userTo));
     }
 }

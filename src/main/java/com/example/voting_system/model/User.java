@@ -21,9 +21,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends NamedEntity implements HasIdAndEmail, Serializable {
-    @Serial
-    public static final long serialVersionUID = 1L;
+public class User extends NamedEntity implements HasIdAndEmail {
 
     @Column(name = "email", nullable = false, unique = true)
     @Email
@@ -34,7 +32,7 @@ public class User extends NamedEntity implements HasIdAndEmail, Serializable {
 
     @Column(name = "password", nullable = false)
     @NotBlank
-    @Size(max = 256)
+    @Size(max = 128)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
@@ -49,9 +47,11 @@ public class User extends NamedEntity implements HasIdAndEmail, Serializable {
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
-            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_roles")})
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role")})
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
+    @JoinColumn
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
 
     public User(User u) {
@@ -73,6 +73,10 @@ public class User extends NamedEntity implements HasIdAndEmail, Serializable {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
+    }
+
+    public boolean hasRole(Role role) {
+        return roles != null && roles.contains(role);
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.example.voting_system.web.user;
 
 import com.example.voting_system.model.HasIdAndEmail;
 import com.example.voting_system.repository.UserRepository;
-import com.example.voting_system.web.SecurityUtil;
+import com.example.voting_system.web.AuthUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -33,13 +33,13 @@ public class UniqueEmailValidator implements Validator {
                         if (request.getMethod().equals("PUT")) { // UPDATE
                             int dbId = dbUser.id();
 
-                            // it is ok, if update ourself
+                            // it is ok, if update ourselves
                             if (user.getId() != null && dbId == user.id()) return;
 
                             // Workaround for update with user.id=null in request body
                             // ValidationUtil.assureIdConsistent called after this validation
                             String requestURI = request.getRequestURI();
-                            if (requestURI.endsWith("/" + dbId) || (dbId == SecurityUtil.authId() && requestURI.contains("/profile")))
+                            if (requestURI.endsWith("/" + dbId) || (dbId == AuthUser.authId() && requestURI.contains("/profile")))
                                 return;
                         }
                         errors.rejectValue("email", "", EXCEPTION_DUPLICATE_EMAIL);

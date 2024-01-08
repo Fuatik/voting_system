@@ -26,7 +26,6 @@ public class BaseEntity implements Persistable<Integer>, HasId {
         return id;
     }
 
-    @JsonIgnore
     @Override
     public boolean isNew() {
         return id == null;

@@ -2,10 +2,11 @@ package com.example.voting_system.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,8 +23,10 @@ import org.springframework.context.annotation.Configuration;
                 description = """
                         <p><b>test credentials:</b><br>
                         - user@gmail.com / password<br>
-                        - admin@gmail.com / password</p>
-                        """
+                        - admin@gmail.com / password<br>
+                        - guest@gmail.com / guest</p>
+                        """,
+                contact = @Contact(name = "Fuat Safiulin", email = "fuatsafiulin@gmail.com")
         ),
         security = @SecurityRequirement(name = "basicAuth")
 )
