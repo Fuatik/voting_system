@@ -24,18 +24,20 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.Optional;
 
+import static com.example.voting_system.util.UserUtil.PASSWORD_ENCODER;
+
 @Configuration
 @EnableWebSecurity
 @Slf4j
 @AllArgsConstructor
 public class SecurityConfig {
-    public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
     private final UserRepository userRepository;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
     private void setMapper(ObjectMapper objectMapper) {
-        JsonUtil.setObjectMapper(objectMapper);
+        JsonUtil.setMapper(objectMapper);
     }
 
     @Bean

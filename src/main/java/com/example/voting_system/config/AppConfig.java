@@ -1,5 +1,6 @@
 package com.example.voting_system.config;
 
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -20,5 +21,10 @@ public class AppConfig {
     public Server h2Server() throws SQLException {
         log.info("Start H2 TCP server");
         return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
+    }
+
+    @Bean
+    Hibernate5Module module() {
+        return new Hibernate5Module();
     }
 }

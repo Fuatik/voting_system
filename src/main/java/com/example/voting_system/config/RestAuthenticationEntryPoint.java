@@ -14,7 +14,7 @@ import java.io.IOException;
 @Component
 @AllArgsConstructor
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    @Qualifier("handlerExceptionResolve")
+    @Qualifier("handlerExceptionResolver")
     private final HandlerExceptionResolver resolver;
 
     @Override

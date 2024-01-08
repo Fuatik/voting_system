@@ -1,7 +1,5 @@
 package com.example.voting_system.util;
 
-import com.example.voting_system.config.SecurityConfig;
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -10,6 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
+
+import static com.example.voting_system.util.UserUtil.PASSWORD_ENCODER;
 
 @UtilityClass
 public class JsonDeserializers {
@@ -20,7 +20,7 @@ public class JsonDeserializers {
             ObjectCodec oc = jsonParser.getCodec();
             JsonNode node = oc.readTree(jsonParser);
             String rawPassword = node.asText();
-            return SecurityConfig.PASSWORD_ENCODER.encode(rawPassword);
+            return PASSWORD_ENCODER.encode(rawPassword);
         }
     }
 }

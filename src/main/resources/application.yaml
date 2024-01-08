@@ -2,6 +2,7 @@ spring:
   jpa:
     show-sql: true
     open-in-view: false
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     properties:
@@ -10,7 +11,6 @@ spring:
         default_batch_fetch_size: 20
         jdbc:
           batch_size: 20
-    defer-datasource-initialization: true
 
   datasource:
     url: jdbc:h2:mem:voting
@@ -20,26 +20,17 @@ spring:
     username: sa
     password:
 
-  h2:
-    console:
-      enabled: true
+  jackson:
+    visibility:
+      field: any
+      getter: none
+      setter: none
+      is-getter: none
 
   cache:
     cache-names: users
     caffeine:
       spec: maximumSize=5000,expireAfterAccess=60s
-
-  data:
-    rest:
-      base-path: /api
-      return-body-on-create: true
-      default-page-size: 20
-
-#  security:
-#    user:
-#      name: user
-#      password: password
-#      roles: USER
 
 logging:
   level:
@@ -53,3 +44,7 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+springdoc:
+  swagger-ui:
+    path: /
