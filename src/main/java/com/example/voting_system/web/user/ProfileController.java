@@ -16,8 +16,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-import static com.example.voting_system.util.ValidationUtil.assureIdConsistent;
-import static com.example.voting_system.util.ValidationUtil.checkNew;
+import static com.example.voting_system.web.RestValidation.assureIdConsistent;
+import static com.example.voting_system.web.RestValidation.checkNew;
 
 @RestController
 @RequestMapping(value = ProfileController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,4 +1,4 @@
-package com.example.voting_system.util;
+package com.example.voting_system.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

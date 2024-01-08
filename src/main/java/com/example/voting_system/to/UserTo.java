@@ -1,7 +1,7 @@
 package com.example.voting_system.to;
 
 import com.example.voting_system.model.HasIdAndEmail;
-import com.example.voting_system.util.NoHtml;
+import com.example.voting_system.validation.NoHtml;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

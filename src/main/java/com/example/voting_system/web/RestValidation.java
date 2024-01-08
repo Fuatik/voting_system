@@ -1,12 +1,11 @@
-package com.example.voting_system.util;
+package com.example.voting_system.web;
 
 import com.example.voting_system.error.IllegalRequestDataException;
-import com.example.voting_system.model.BaseEntity;
 import com.example.voting_system.model.HasId;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ValidationUtil {
+public class RestValidation {
 
     public static void checkNew(HasId bean) {
         if (!bean.isNew()) {

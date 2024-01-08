@@ -1,19 +1,11 @@
 package com.example.voting_system.model;
 
-import com.example.voting_system.util.JsonDeserializers;
-import com.example.voting_system.util.NoHtml;
+import com.example.voting_system.validation.NoHtml;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.*;
 
 @Entity
@@ -50,9 +42,7 @@ public class User extends NamedEntity implements HasIdAndEmail {
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role")})
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
-    @JoinColumn
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Role> roles;
+    private Set<Role> roles = EnumSet.noneOf(Role.class);;
 
     public User(User u) {
         this(u.id, u.name, u.email, u.password, u.enabled, u.registered, u.roles);
@@ -72,11 +62,11 @@ public class User extends NamedEntity implements HasIdAndEmail {
     }
 
     public void setRoles(Collection<Role> roles) {
-        this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
+        this.roles = roles.isEmpty() ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
     }
 
     public boolean hasRole(Role role) {
-        return roles != null && roles.contains(role);
+        return roles.contains(role);
     }
 
     @Override

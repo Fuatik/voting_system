@@ -1,12 +1,9 @@
 package com.example.voting_system.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
-import org.springframework.util.Assert;
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
@@ -14,22 +11,12 @@ import org.springframework.util.Assert;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BaseEntity implements Persistable<Integer>, HasId {
+public class BaseEntity implements HasId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     protected Integer id;
-
-    public int id() {
-        Assert.notNull(id, "Entity must has id");
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
 
     @Override
     public boolean equals(Object obj) {

@@ -1,5 +1,6 @@
 package com.example.voting_system.model;
 
+import com.example.voting_system.validation.NoHtml;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotBlank;
@@ -18,6 +19,7 @@ public class NamedEntity extends BaseEntity {
     @NotBlank
     @Size(min = 2, max = 128)
     @Column(name = "name", nullable = false)
+    @NoHtml
     protected String name;
 
     protected NamedEntity(Integer id, String name) {
