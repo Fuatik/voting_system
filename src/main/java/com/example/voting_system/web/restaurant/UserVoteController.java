@@ -8,13 +8,13 @@ import com.example.voting_system.repository.RestaurantRepository;
 import com.example.voting_system.repository.UserRepository;
 import com.example.voting_system.repository.VoteRepository;
 import com.example.voting_system.to.RestaurantTo;
+import com.example.voting_system.util.EntityMapper;
 import com.example.voting_system.web.AuthUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.voting_system.util.EntityMapper.updateToTo;
+import static com.example.voting_system.util.EntityMapper.getTo;
 import static com.example.voting_system.web.restaurant.UserVoteController.REST_URL;
 
 @RestController
@@ -43,11 +43,7 @@ public class UserVoteController {
         log.info("getAll restaurants");
         List<Restaurant> restaurants = restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         return restaurants.stream()
-                .map(e -> updateToTo(e, new RestaurantTo(
-                        e.id(),
-                        e.getName(),
-                        e.getMenu(),
-                        e.getVotes())))
+                .map(EntityMapper::getTo)
                 .collect(Collectors.toList());
     }
 
@@ -55,11 +51,7 @@ public class UserVoteController {
     public RestaurantTo get(@PathVariable int id) {
         log.info("get menu for restaurant {}", id);
         Restaurant restaurant = restaurantRepository.getExisted(id);
-        return updateToTo(restaurant, new RestaurantTo(
-                restaurant.id(),
-                restaurant.getName(),
-                restaurant.getMenu(),
-                restaurant.getVotes()));
+        return getTo(restaurant);
     }
 
     @PatchMapping("/{id}")

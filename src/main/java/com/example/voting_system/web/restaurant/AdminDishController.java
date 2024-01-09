@@ -19,7 +19,7 @@ import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.RestValidation.checkNew;
 
 @RestController
-@RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 @Slf4j
 public class AdminDishController {
