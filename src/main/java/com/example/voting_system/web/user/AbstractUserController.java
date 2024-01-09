@@ -1,6 +1,6 @@
 package com.example.voting_system.web.user;
 
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.User;
 import com.example.voting_system.repository.UserRepository;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

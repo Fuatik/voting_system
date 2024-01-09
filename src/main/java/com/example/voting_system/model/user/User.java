@@ -1,5 +1,7 @@
-package com.example.voting_system.model;
+package com.example.voting_system.model.user;
 
+import com.example.voting_system.model.HasIdAndEmail;
+import com.example.voting_system.model.NamedEntity;
 import com.example.voting_system.validation.NoHtml;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;

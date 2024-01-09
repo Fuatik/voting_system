@@ -1,7 +1,7 @@
 package com.example.voting_system.web.user;
 
-import com.example.voting_system.model.Role;
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.Role;
+import com.example.voting_system.model.user.User;
 import com.example.voting_system.util.JsonUtil;
 import com.example.voting_system.web.MatcherFactory;
 

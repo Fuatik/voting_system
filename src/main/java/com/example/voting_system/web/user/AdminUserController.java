@@ -1,6 +1,6 @@
 package com.example.voting_system.web.user;
 
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.User;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;

@@ -1,8 +1,8 @@
 package com.example.voting_system.config;
 
 import com.example.voting_system.web.AuthUser;
-import com.example.voting_system.model.Role;
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.Role;
+import com.example.voting_system.model.user.User;
 import com.example.voting_system.repository.UserRepository;
 import com.example.voting_system.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;

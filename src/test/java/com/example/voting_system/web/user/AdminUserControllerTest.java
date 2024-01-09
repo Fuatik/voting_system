@@ -8,8 +8,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.voting_system.model.Role;
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.Role;
+import com.example.voting_system.model.user.User;
 import com.example.voting_system.repository.UserRepository;
 import com.example.voting_system.web.AbstractControllerTest;
 

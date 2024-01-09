@@ -1,7 +1,7 @@
 package com.example.voting_system.web;
 
-import com.example.voting_system.model.Role;
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.Role;
+import com.example.voting_system.model.user.User;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.security.core.Authentication;

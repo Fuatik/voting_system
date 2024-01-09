@@ -1,7 +1,7 @@
 package com.example.voting_system.repository;
 
 import com.example.voting_system.error.NotFoundException;
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 

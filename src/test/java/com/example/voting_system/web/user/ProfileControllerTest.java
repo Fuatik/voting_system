@@ -1,10 +1,10 @@
 package com.example.voting_system.web.user;
 
-import com.example.voting_system.model.User;
+import com.example.voting_system.model.user.User;
 import com.example.voting_system.repository.UserRepository;
 import com.example.voting_system.to.UserTo;
 import com.example.voting_system.util.JsonUtil;
-import com.example.voting_system.util.UsersUtil;
+import com.example.voting_system.util.EntityMapper;
 import com.example.voting_system.web.AbstractControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void register() throws Exception {
         UserTo newTo = new UserTo(null, "newName", "newemail@gmail.com", "newPassword");
-        User newUser = UsersUtil.createNewFromTo(newTo);
+        User newUser = EntityMapper.createNewFromTo(newTo);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTo)))
@@ -70,7 +70,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        USER_MATCHER.assertMatch(repository.getExisted(USER_ID), UsersUtil.updateFromTo(new User(user), updatedTo));
+        USER_MATCHER.assertMatch(repository.getExisted(USER_ID), EntityMapper.updateFromTo(new User(user), updatedTo));
     }
 
     @Test
