@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,12 +23,13 @@ public class Restaurant extends NamedEntity {
 
     @ManyToMany
     @OrderBy("name ASC")
-    private List<Dish> menu = List.of();
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Dish> menu = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("voteTime DESC")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
-    private Set<Vote> votes = Set.of();
+    private Set<Vote> votes = new HashSet<>();
 
     @Override
     public String toString() {

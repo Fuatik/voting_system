@@ -53,7 +53,7 @@ public class UserVoteController {
 
     @GetMapping("/{id}")
     public RestaurantTo get(@PathVariable int id) {
-        log.info("get Menu for restaurant {}", id);
+        log.info("get menu for restaurant {}", id);
         Restaurant restaurant = restaurantRepository.getExisted(id);
         return updateToTo(restaurant, new RestaurantTo(
                 restaurant.id(),
@@ -65,7 +65,7 @@ public class UserVoteController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public ResponseEntity<String> vote(@PathVariable int id, @AuthenticationPrincipal AuthUser authUser) {
+    public void vote(@PathVariable int id, @AuthenticationPrincipal AuthUser authUser) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime deadLine = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 11, 0);
         User user = authUser.getUser();
@@ -91,7 +91,6 @@ public class UserVoteController {
             } else {
                 throw new VoteException("It's too late to change your vote for today.");
             }
-            return ResponseEntity.ok("Vote successful");
         } catch (VoteException e) {
             throw e;
         } catch (Exception e) {

@@ -44,7 +44,7 @@ public class User extends NamedEntity implements HasIdAndEmail {
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role")})
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> roles = EnumSet.noneOf(Role.class);;
+    private Set<Role> roles = EnumSet.noneOf(Role.class);
 
     public User(User u) {
         this(u.id, u.name, u.email, u.password, u.enabled, u.registered, u.roles);
