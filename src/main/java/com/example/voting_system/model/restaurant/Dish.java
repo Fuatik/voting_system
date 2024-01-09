@@ -1,10 +1,8 @@
 package com.example.voting_system.model.restaurant;
 
 import com.example.voting_system.model.NamedEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +17,8 @@ public class Dish extends NamedEntity {
 
     private Long price;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
-
+    @Override
+    public String toString() {
+        return id + '[' + name + ']' + '[' + price + ']';
+    }
 }

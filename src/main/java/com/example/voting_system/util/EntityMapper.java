@@ -1,9 +1,8 @@
 package com.example.voting_system.util;
 
-import com.example.voting_system.model.restaurant.Dish;
 import com.example.voting_system.model.user.Role;
 import com.example.voting_system.model.user.User;
-import com.example.voting_system.to.DishTo;
+
 import com.example.voting_system.to.UserTo;
 import lombok.experimental.UtilityClass;
 import org.springframework.beans.BeanUtils;
@@ -25,5 +24,10 @@ public class EntityMapper {
     public static <T, U> T updateFromTo(T entity, U entityTo) {
         BeanUtils.copyProperties(entityTo, entity);
         return entity;
+    }
+
+    public static <T, U> U updateToTo(T entity, U entityTo) {
+        BeanUtils.copyProperties(entity, entityTo);
+        return entityTo;
     }
 }
