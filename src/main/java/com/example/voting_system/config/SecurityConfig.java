@@ -4,11 +4,9 @@ import com.example.voting_system.web.AuthUser;
 import com.example.voting_system.model.user.Role;
 import com.example.voting_system.model.user.User;
 import com.example.voting_system.repository.UserRepository;
-import com.example.voting_system.util.JsonUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,18 +32,13 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    @Autowired
-    private void setMapper(ObjectMapper objectMapper) {
-        JsonUtil.setMapper(objectMapper);
-    }
-
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return PASSWORD_ENCODER;
     }
 
     @Bean
-    public UserDetailsService userDetailsServiceBean() {
+    UserDetailsService userDetailsService() {
         return email -> {
             log.debug("Authenticating '{}'", email);
             Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
@@ -54,6 +47,7 @@ public class SecurityConfig {
         };
     }
 
+    //https://stackoverflow.com/a/76538979/548473
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/api/**").authorizeHttpRequests(authz ->

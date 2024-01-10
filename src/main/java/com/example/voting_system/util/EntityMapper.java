@@ -27,6 +27,6 @@ public class EntityMapper {
                 restaurant.id(),
                 restaurant.getName(),
                 restaurant.getMenu(),
-                restaurant.getVotes());
+                restaurant.getVotes().size());
     }
 }

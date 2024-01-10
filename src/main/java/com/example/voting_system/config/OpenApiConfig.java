@@ -11,8 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+//https://sabljakovich.medium.com/adding-basic-auth-authorization-option-to-openapi-swagger-documentation-java-spring-95abbede27e9
 @SecurityScheme(
-        name = "basivAuth",
+        name = "basicAuth",
         type = SecuritySchemeType.HTTP,
         scheme = "basic"
 )
@@ -21,9 +22,10 @@ import org.springframework.context.annotation.Configuration;
                 title = "REST API documentation",
                 version = "1.0",
                 description = """
-                        <p><b>test credentials:</b><br>
+                        Приложение по <a href='https://javaops.ru/view/bootjava'>курсу BootJava</a>
+                        <p><b>Тестовые креденшелы:</b><br>
                         - user@gmail.com / password<br>
-                        - admin@gmail.com / password<br>
+                        - admin@gmail.com / admin<br>
                         - guest@gmail.com / guest</p>
                         """,
                 contact = @Contact(name = "Fuat Safiulin", email = "fuatsafiulin@gmail.com")
@@ -31,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
         security = @SecurityRequirement(name = "basicAuth")
 )
 public class OpenApiConfig {
+
     @Bean
     public GroupedOpenApi api() {
         return GroupedOpenApi.builder()

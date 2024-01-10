@@ -35,13 +35,13 @@ import java.util.Optional;
 
 import static com.example.voting_system.error.ErrorType.*;
 
-@Getter
 @RestControllerAdvice
 @AllArgsConstructor
 @Slf4j
 public class RestExceptionHandler {
     public static final String ERR_PFX = "ERR# ";
 
+    @Getter
     private final MessageSource messageSource;
 
     //    https://stackoverflow.com/a/52254601/548473
@@ -91,7 +91,6 @@ public class RestExceptionHandler {
                 messageSource.getMessage(error.getCode(), error.getArguments(), error.getDefaultMessage(), LocaleContextHolder.getLocale());
     }
 
-    //   https://howtodoinjava.com/spring-mvc/spring-problemdetail-errorresponse/#5-adding-problemdetail-to-custom-exceptions
     @ExceptionHandler(Exception.class)
     ProblemDetail exception(Exception ex, HttpServletRequest request) {
         return processException(ex, request, Map.of());
@@ -115,6 +114,7 @@ public class RestExceptionHandler {
         }
     }
 
+    //    https://datatracker.ietf.org/doc/html/rfc7807
     private ProblemDetail createProblemDetail(Exception ex, String path, ErrorType type, String defaultDetail, @NonNull Map<String, Object> additionalParams) {
         ErrorResponse.Builder builder = ErrorResponse.builder(ex, type.status, defaultDetail);
         ProblemDetail pd = builder

@@ -4,20 +4,22 @@ import com.example.voting_system.model.NamedEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "dish")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Dish extends NamedEntity {
+
+    @Column(name = "dish_date", nullable = false)
+    private LocalDate dishDate;
 
     @Column(name = "price", nullable = false)
     @NotNull
