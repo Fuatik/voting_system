@@ -22,11 +22,11 @@ public class EntityMapper {
         return user;
     }
 
-    public static RestaurantTo getTo(Restaurant restaurant) {
+    public static RestaurantTo getToWithRating(Restaurant restaurant, int rating) {
         return new RestaurantTo(
                 restaurant.id(),
                 restaurant.getName(),
                 restaurant.getMenu(),
-                restaurant.getVotes().size());
+                rating);
     }
 }

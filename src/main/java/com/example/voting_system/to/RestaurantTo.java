@@ -11,13 +11,13 @@ import java.util.List;
 public class RestaurantTo extends NamedTo {
 
     List<Dish> menu;
-@Setter
-    Integer countVotes;
+    @Setter
+    Integer rating;
 
-    public RestaurantTo(Integer id, String name, List<Dish> menu, Integer countVotes) {
+    public RestaurantTo(Integer id, String name, List<Dish> menu, Integer rating) {
         super(id, name);
         this.menu = menu;
-        this.countVotes = countVotes;
+        this.rating = rating;
     }
 
 
@@ -28,7 +28,7 @@ public class RestaurantTo extends NamedTo {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", menu='" + menu + '\'' +
-                ", countVotes='" + countVotes + '\'' +
+                ", rating='" + rating + '\'' +
                 '}';
     }
 }

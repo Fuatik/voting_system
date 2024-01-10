@@ -2,8 +2,6 @@ package com.example.voting_system.web.restaurant;
 
 import com.example.voting_system.model.restaurant.Restaurant;
 import com.example.voting_system.repository.RestaurantRepository;
-import com.example.voting_system.to.RestaurantTo;
-import com.example.voting_system.util.EntityMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.example.voting_system.util.EntityMapper.getTo;
 import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.RestValidation.checkNew;
 
@@ -32,19 +28,15 @@ public class AdminRestaurantController {
     private RestaurantRepository repository;
 
     @GetMapping
-    public List<RestaurantTo> getAll() {
+    public List<Restaurant> getAll() {
         log.info("getAll restaurants for admin");
-        List<Restaurant> restaurants = repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
-        return restaurants.stream()
-                .map(EntityMapper::getTo)
-                .collect(Collectors.toList());
+        return repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     @GetMapping("/{id}")
-    public RestaurantTo get(@PathVariable int id) {
+    public Restaurant get(@PathVariable int id) {
         log.info("get menu for restaurant {}", id);
-        Restaurant restaurant = repository.getExisted(id);
-        return getTo(restaurant);
+        return repository.getExisted(id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

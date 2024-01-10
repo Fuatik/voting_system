@@ -13,5 +13,5 @@ public interface VoteRepository extends BaseRepository<Vote> {
     Optional<Vote> findByUserIdAndVoteDate(int userId, LocalDate date);
 
 
-    int countByRestaurantIdAndVoteDate(int restaurantId, LocalDate voteDate);
+    Optional<Integer> countByRestaurantIdAndVoteDate(int restaurantId, LocalDate voteDate);
 }
