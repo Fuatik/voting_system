@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.RestValidation.checkNew;
@@ -33,21 +34,20 @@ public class AdminMenuController {
     private RestaurantRepository restaurantRepository;
     private DishRepository dishRepository;
 
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<DishTo> getMenu(@PathVariable int restaurantId) {
         Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
         return restaurant.getMenu().stream()
                 .map(this::getTo)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Dish getDishInMenu(@PathVariable int id, @PathVariable String restaurantId) {
+    public DishTo getDishInMenu(@PathVariable int id, @PathVariable String restaurantId) {
         log.info("get Dish with id={} in menu for Restaurant with id={}", id, restaurantId);
-        return dishRepository.getExisted(id);
+        return getTo(dishRepository.getExisted(id));
     }
 
     @DeleteMapping("/{id}")
@@ -58,7 +58,7 @@ public class AdminMenuController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Dish> addDishToMenu(@Valid @RequestBody Dish dish, @PathVariable String restaurantId) {
+    public ResponseEntity<DishTo> addDishToMenu(@Valid @RequestBody Dish dish, @PathVariable String restaurantId) {
         log.info("add {} to menu for Restaurant with id={}", dish, restaurantId);
         checkNew(dish);
 
@@ -73,7 +73,7 @@ public class AdminMenuController {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{restaurantId}" + "/menu" + "/{id}")
                 .buildAndExpand(restaurantId, created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(getTo(created));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

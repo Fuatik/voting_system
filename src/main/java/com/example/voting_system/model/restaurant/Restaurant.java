@@ -25,17 +25,21 @@ public class Restaurant extends NamedEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @BatchSize(size = 10)
-    private List<Dish> menu = new ArrayList<>();
+    private Set<Dish> menu;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OrderBy("voteTime DESC")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @BatchSize(size = 2000)
-    private Set<Vote> votes = new HashSet<>();
+    private Set<Vote> votes;
 
     public Restaurant(String name) {
         this.name = name;
+    }
+
+    public Restaurant(Integer id, String name) {
+        super(id, name);
     }
 
     @Override
