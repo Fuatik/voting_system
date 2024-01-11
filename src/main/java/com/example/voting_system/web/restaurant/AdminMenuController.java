@@ -23,6 +23,13 @@ import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.RestValidation.checkNew;
 import static com.example.voting_system.web.restaurant.AdminRestaurantController.REST_URL;
 
+
+/**
+ * Controller for handling administrative operations related to restaurant menus.
+ *
+ * <p>The controller provides endpoints for retrieving, adding, updating, and removing dishes from a restaurant's menu.
+ * All operations are performed under the "/api/restaurants/{restaurantId}/menu" base URL.
+ */
 @RestController
 @RequestMapping(value = AdminMenuController.REST_URL_MENU, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
@@ -84,6 +91,12 @@ public class AdminMenuController {
         dishRepository.save(dish);
     }
 
+    /**
+     * Converts a Dish entity to a DishTo transfer object.
+     *
+     * @param dish The Dish entity to be converted.
+     * @return A DishTo object containing relevant dish details.
+     */
     private DishTo getTo(Dish dish) {
         return new DishTo(dish.id(), dish.getName(), dish.getPrice());
     }

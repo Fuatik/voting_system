@@ -21,7 +21,7 @@ public class User extends NamedEntity implements HasIdAndEmail {
     @Email
     @NotBlank
     @Size(max = 128)
-    @NoHtml
+    @NoHtml // https://stackoverflow.com/questions/17480809
     private String email;
 
     @Column(name = "password", nullable = false)

@@ -30,6 +30,14 @@ import java.util.stream.Collectors;
 import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.restaurant.UserVoteController.REST_URL;
 
+/**
+ * Controller for handling user votes on restaurants.
+ *
+ * <p>The controller provides endpoints for users to vote on their preferred restaurants.
+ * It also retrieves a list of all restaurants with their current ratings.
+ * The voting is restricted to a specific time frame determined by the configured endVotingTime.
+ * * All operations are performed under the "/api/restaurants" base URL.
+ */
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
@@ -42,6 +50,10 @@ public class UserVoteController {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 
+    /**
+     * <p>This value is configurable in the application.yaml file under the key "voting.end-time".
+     * Example configuration: {@code voting.end-time: "11:00"}.
+     */
     private LocalTime endVotingTime;
 
     @PatchMapping("/{id}")
@@ -101,6 +113,13 @@ public class UserVoteController {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * Generates a RestaurantTo object with the current rating for a given restaurant.
+     *
+     * @param restaurant The restaurant for which to generate the RestaurantTo object.
+     * @return A RestaurantTo object with restaurant details and the current rating.
+     */
     private RestaurantTo getToWithRating(Restaurant restaurant) {
         int id = restaurant.id();
         int rating = voteRepository.countByRestaurantIdAndVoteDate(id, LocalDate.now()).orElse(0);

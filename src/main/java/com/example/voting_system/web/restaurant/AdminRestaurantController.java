@@ -18,6 +18,12 @@ import java.util.List;
 import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.RestValidation.checkNew;
 
+/**
+ * Controller for handling administrative operations related to restaurants.
+ *
+ * <p>The controller provides endpoints for retrieving, creating, updating, and deleting restaurant entities.
+ * All operations are performed under the "/api/admin/restaurants" base URL.
+ */
 @RestController
 @RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor

@@ -15,9 +15,10 @@ public class BaseEntity implements HasId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY) // https://stackoverflow.com/a/28025008/548473
     protected Integer id;
 
+    //    https://stackoverflow.com/questions/1638723
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
