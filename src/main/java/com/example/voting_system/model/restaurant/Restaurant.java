@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.proxy.HibernateProxy;
@@ -23,12 +24,14 @@ public class Restaurant extends NamedEntity {
     @OrderBy("name ASC")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @BatchSize(size = 10)
     private List<Dish> menu = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OrderBy("voteTime DESC")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @BatchSize(size = 2000)
     private Set<Vote> votes = new HashSet<>();
 
     public Restaurant(String name) {

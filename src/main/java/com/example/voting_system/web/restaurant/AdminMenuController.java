@@ -62,7 +62,11 @@ public class AdminMenuController {
         log.info("add {} to menu for Restaurant with id={}", dish, restaurantId);
         checkNew(dish);
 
-        Restaurant restaurant = restaurantRepository.getExisted(Integer.parseInt(restaurantId));
+        int id = Integer.parseInt(restaurantId);
+
+        Restaurant restaurant = restaurantRepository.getExisted(id);
+        assureIdConsistent(restaurant, id);
+
         dish.setRestaurant(restaurant);
 
         Dish created = dishRepository.save(dish);

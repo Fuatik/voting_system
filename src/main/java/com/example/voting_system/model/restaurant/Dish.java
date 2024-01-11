@@ -19,11 +19,11 @@ import java.time.LocalDate;
 public class Dish extends NamedEntity {
 
     @Column(name = "dish_date", nullable = false)
+    @NotNull(message = "date must not be null")
     private LocalDate dishDate;
 
     @Column(name = "price", nullable = false)
-    @NotNull
-    @Range(min = 0)
+    @Range(min = 0, max = 1000000, message = "price must be between 0 and 1 000 000 cents")
     private Long price;
 
     @ManyToOne(fetch = FetchType.LAZY)

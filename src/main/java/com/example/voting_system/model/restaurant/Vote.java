@@ -26,21 +26,23 @@ public class Vote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull(message = "user must not be null")
     @JsonIgnore
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull(message = "restaurant must not be null")
     @JsonIgnore
     private Restaurant restaurant;
 
     @Column(name = "vote_date",nullable = false)
-    @NotNull
+    @NotNull(message = "date must not be null")
     private LocalDate voteDate;
 
     @Column(name = "vote_time",nullable = false)
-    @NotNull
+    @NotNull(message = "time must not be null")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime voteTime;
 
