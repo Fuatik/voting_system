@@ -2,7 +2,7 @@ package com.example.voting_system.web.user;
 
 import com.example.voting_system.model.user.User;
 import com.example.voting_system.to.UserTo;
-import com.example.voting_system.util.EntityMapper;
+import com.example.voting_system.util.UserUtil;
 import com.example.voting_system.web.AuthUser;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class ProfileController extends AbstractUserController {
     public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
         log.info("register {}", userTo);
         checkNew(userTo);
-        User created = repository.prepareAndSave(EntityMapper.createNewFromTo(userTo));
+        User created = repository.prepareAndSave(UserUtil.createNewFromTo(userTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).build().toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
@@ -54,6 +54,6 @@ public class ProfileController extends AbstractUserController {
     public void update(@Valid @RequestBody UserTo userTo, @AuthenticationPrincipal AuthUser authUser) {
         assureIdConsistent(userTo, authUser.id());
         User user = authUser.getUser();
-        repository.prepareAndSave(EntityMapper.updateFromTo(user, userTo));
+        repository.prepareAndSave(UserUtil.updateFromTo(user, userTo));
     }
 }

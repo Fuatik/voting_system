@@ -1,17 +1,19 @@
 package com.example.voting_system.to;
 
 import com.example.voting_system.model.restaurant.Dish;
+import com.example.voting_system.validation.NoHtml;
 import lombok.EqualsAndHashCode;
-import lombok.Setter;
-
+import lombok.Value;
 
 import java.util.List;
 
+@Value
 @EqualsAndHashCode(callSuper = true)
 public class RestaurantTo extends NamedTo {
 
     List<Dish> menu;
-    @Setter
+
+    @NoHtml
     Integer rating;
 
     public RestaurantTo(Integer id, String name, List<Dish> menu, Integer rating) {
@@ -19,8 +21,6 @@ public class RestaurantTo extends NamedTo {
         this.menu = menu;
         this.rating = rating;
     }
-
-
 
     @Override
     public String toString() {

@@ -30,7 +30,7 @@ import static com.example.voting_system.web.restaurant.UserVoteController.REST_U
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class UserVoteController {
     static final String REST_URL = "/api/restaurants";
 
@@ -39,9 +39,10 @@ public class UserVoteController {
     private final UserRepository userRepository;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<RestaurantTo> getAll() {
-        log.info("getAll restaurants");
-       return restaurantRepository.findAllWithMenus(LocalDate.now())
+        log.info("get all Restaurants to vote");
+        return restaurantRepository.findAllWithMenusByDate(LocalDate.now())
                .orElseThrow(() -> new NotFoundException("Restaurants were not found"))
                .stream()
                .map(this::getToWithRating)
@@ -50,7 +51,9 @@ public class UserVoteController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void vote(@PathVariable int id, @AuthenticationPrincipal AuthUser authUser) {
+        log.info("User {} votes for a Restaurant with id={}", authUser, id);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime deadLine = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),11, 0);
         User user = authUser.getUser();
@@ -78,7 +81,6 @@ public class UserVoteController {
 
                     voteRepository.save(newVote);
                 }
-                //voteRepository.flush();
             } else {
                 throw new VoteException("It's too late to change your vote for today.");
             }

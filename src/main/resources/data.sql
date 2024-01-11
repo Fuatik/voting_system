@@ -15,17 +15,17 @@ VALUES ('Restaurant1'),
        ('Restaurant4');
 
 INSERT INTO DISH(dish_date, restaurant_id, price, name)
-VALUES (now(), 1, 99, 'Dish1'),
-       (now(), 1, 999, 'Dish2'),
-       (now(), 3, 499, 'Dish3'),
-       (now(), 4, 199, 'Dish4'),
+VALUES (CURRENT_DATE, 1, 99, 'Dish1'),
+       (CURRENT_DATE, 1, 999, 'Dish2'),
+       (CURRENT_DATE, 3, 499, 'Dish3'),
+       (CURRENT_DATE, 4, 199, 'Dish4'),
        ('2024-01-08', 1, 1099, 'Dish5'),
        ('2024-01-09', 2, 399, 'Dish6');
 
 INSERT INTO VOTE(restaurant_id, user_id, vote_date, vote_time)
-VALUES ( 1, 1, now(), now()),
-       ( 3, 2, now(), now()),
-       ( 2, 1, '2024-01-09', now()),
-       ( 4, 1, '2024-01-08', now()),
-       ( 1, 1, '2024-01-07', now());
+VALUES ( 1, 1, CURRENT_DATE, CURRENT_TIME()),
+       ( 3, 2, CURRENT_DATE, CURRENT_TIME()),
+       ( 2, 1, '2024-01-09', CURRENT_TIME()),
+       ( 4, 1, '2024-01-08', CURRENT_TIME()),
+       ( 1, 1, '2024-01-07', CURRENT_TIME());
 

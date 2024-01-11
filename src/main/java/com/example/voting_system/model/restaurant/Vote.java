@@ -2,6 +2,7 @@ package com.example.voting_system.model.restaurant;
 
 import com.example.voting_system.model.BaseEntity;
 import com.example.voting_system.model.user.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,7 @@ public class Vote extends BaseEntity {
 
     @Column(name = "vote_time",nullable = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime voteTime;
 
     @Override
