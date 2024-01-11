@@ -12,6 +12,8 @@ import com.example.voting_system.to.RestaurantTo;
 import com.example.voting_system.web.AuthUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +26,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.restaurant.UserVoteController.REST_URL;
 
 @RestController
@@ -40,6 +43,7 @@ public class UserVoteController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable("restaurants")
     public List<RestaurantTo> getAll() {
         log.info("get all Restaurants to vote");
         return restaurantRepository.findAllWithMenusByDate(LocalDate.now())
@@ -52,10 +56,11 @@ public class UserVoteController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void vote(@PathVariable int id, @AuthenticationPrincipal AuthUser authUser) {
         log.info("User {} votes for a Restaurant with id={}", authUser, id);
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime deadLine = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),11, 0);
+        LocalDateTime deadLine = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),15, 0);
         User user = authUser.getUser();
         try {
             if (now.isBefore(deadLine)) {
@@ -66,6 +71,8 @@ public class UserVoteController {
                     // User already voted, consider it as a change of mind
                     Vote vote = existingVote.get();
                     Restaurant newRestaurant = restaurantRepository.getExisted(id);
+
+                    assureIdConsistent(newRestaurant, id);
 
                     vote.setRestaurant(newRestaurant);
                     vote.setVoteDate(LocalDate.now());
