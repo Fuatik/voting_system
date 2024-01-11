@@ -22,6 +22,8 @@ public class JsonUtil {
         ObjectReader reader = mapper.readerFor(clazz);
         try {
             return reader.<T>readValues(json).readAll();
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Ошибка обработки JSON-массива:\n'" + json + "'", e);
         } catch (IOException e) {
             throw new IllegalArgumentException("Invalid read array from JSON:\n'" + json + "'", e);
         }

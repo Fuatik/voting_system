@@ -24,7 +24,7 @@ VALUES (CURRENT_DATE, 1, 99, 'Dish1'),
 
 
 INSERT INTO VOTE(restaurant_id, user_id, vote_date, vote_time)
-VALUES ( 1, 1, CURRENT_DATE, CURRENT_TIME()),
+VALUES ( 4, 1, CURRENT_DATE, CURRENT_TIME()),
        ( 3, 2, CURRENT_DATE, CURRENT_TIME()),
        ( 2, 1, '2024-01-09', CURRENT_TIME()),
        ( 4, 1, '2024-01-08', CURRENT_TIME()),

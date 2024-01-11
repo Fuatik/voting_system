@@ -48,3 +48,6 @@ server:
 springdoc:
   swagger-ui:
     path: /
+
+voting:
+  end-time: 11:00

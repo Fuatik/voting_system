@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.restaurant.UserVoteController.REST_URL;
@@ -41,17 +42,7 @@ public class UserVoteController {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @Cacheable("restaurants")
-    public List<RestaurantTo> getAll() {
-        log.info("get all Restaurants to vote");
-        return restaurantRepository.findAllWithMenusByDate(LocalDate.now())
-               .orElseThrow(() -> new NotFoundException("Restaurants were not found"))
-               .stream()
-               .map(this::getToWithRating)
-               .toList();
-    }
+    private LocalTime endVotingTime;
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -60,10 +51,10 @@ public class UserVoteController {
     public void vote(@PathVariable int id, @AuthenticationPrincipal AuthUser authUser) {
         log.info("User {} votes for a Restaurant with id={}", authUser, id);
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime deadLine = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),15, 0);
+
         User user = authUser.getUser();
         try {
-            if (now.isBefore(deadLine)) {
+            if (now.toLocalTime().isBefore(endVotingTime)) {
                 Optional<Vote> existingVote = voteRepository.findByUserIdAndVoteDate(
                         user.id(), now.toLocalDate());
 
@@ -96,6 +87,18 @@ public class UserVoteController {
         } catch (Exception e) {
             throw new VoteException("Error processing vote: " + e);
         }
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Cacheable("restaurants")
+    public List<RestaurantTo> getAll() {
+        log.info("get all Restaurants to vote");
+        return restaurantRepository.findAllWithMenusByDate(LocalDate.now())
+                .orElseThrow(() -> new NotFoundException("Restaurants were not found"))
+                .stream()
+                .map(this::getToWithRating)
+                .collect(Collectors.toList());
     }
 
     private RestaurantTo getToWithRating(Restaurant restaurant) {
