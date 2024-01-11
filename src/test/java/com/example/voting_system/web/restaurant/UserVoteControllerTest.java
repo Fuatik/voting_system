@@ -5,7 +5,6 @@ import com.example.voting_system.repository.VoteRepository;
 import com.example.voting_system.util.JsonUtil;
 import com.example.voting_system.web.AbstractControllerTest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +13,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 
 import static com.example.voting_system.web.restaurant.RestaurantTestData.*;
 import static com.example.voting_system.web.restaurant.UserVoteController.REST_URL;
@@ -29,13 +27,6 @@ class UserVoteControllerTest extends AbstractControllerTest {
 
     @Autowired
     private VoteRepository voteRepository;
-
-    @BeforeEach
-    public void setUp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        String currentTimePlusOneHour = LocalDateTime.now().plusHours(1).format(formatter);
-        System.setProperty("voting.end-time", currentTimePlusOneHour);
-    }
 
     @Test
     @WithUserDetails(value = GUEST_MAIL)

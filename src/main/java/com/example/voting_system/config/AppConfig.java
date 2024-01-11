@@ -30,12 +30,15 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @Slf4j
 @EnableCaching
 public class AppConfig {
-
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     @Value("${voting.end-time:11:00}")
     private String endVotingTimeString;
+
+    @Autowired
+    public AppConfig(Environment env) {
+        this.env = env;
+    }
 
     @Profile("!test")
     @Bean(initMethod = "start", destroyMethod = "stop")
