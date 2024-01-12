@@ -21,6 +21,6 @@ Build a voting system for deciding where to have lunch.
 Credentials:
 ```
 User:  user@gmail.com / password
-Admin: admin@gmail.com / password
+Admin: admin@gmail.com / admin
 Guest: guest@gmail.com / guest
 
