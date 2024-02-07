@@ -7,31 +7,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
     @Query("SELECT r FROM Restaurant r " +
-            "LEFT JOIN FETCH r.menu " +
-            "LEFT JOIN FETCH r.votes " +
-            "ORDER BY r.name ASC ")
-    Optional<List<Restaurant>> findAllRestaurantsWithMenuAndVotes();
-
-    @Query("SELECT r FROM Restaurant r " +
-            "LEFT JOIN FETCH r.menu " +
-            "LEFT JOIN FETCH r.votes " +
-            "WHERE r.id=:id")
-    Optional<Restaurant> getRestaurantWithMenuAndVotesById(int id);
-
-    @Query("SELECT r FROM Restaurant r " +
-            "LEFT JOIN FETCH r.menu m " +
-            "WHERE m.dishDate=:date " +
-            "ORDER BY r.name ASC")
-    Optional<List<Restaurant>> findAllWithMenusByDate(LocalDate date);
+            "LEFT JOIN FETCH r.menus m " +
+            "WHERE m.menuDate=:date ")
+    List<Restaurant> findAllWithMenusByDate(LocalDate date);
 
     @Override
-    @EntityGraph(attributePaths = {"menu"})
+    @EntityGraph(attributePaths = {"menus"})
     default Restaurant getExisted(int id) {
         return BaseRepository.super.getExisted(id);
     }
