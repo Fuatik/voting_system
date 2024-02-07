@@ -14,7 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.util.*;
 
 @Entity
-@Table(name = "restaurant")
+@Table(name = "restaurant", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -38,6 +38,7 @@ public class Restaurant extends NamedEntity {
     }
 
     public Restaurant(Integer id, String name) {
-        super(id, name);
+        this.id = id;
+        this.name = name;
     }
 }
