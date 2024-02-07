@@ -1,11 +1,11 @@
 package com.example.voting_system.web.restaurant;
 
-import com.example.voting_system.error.NotFoundException;
 import com.example.voting_system.model.restaurant.Restaurant;
 import com.example.voting_system.repository.RestaurantRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,29 +34,27 @@ public class AdminRestaurantController {
     private RestaurantRepository repository;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<Restaurant> getAll() {
         log.info("Admin getAll Restaurants");
-        return repository.findAllRestaurantsWithMenuAndVotes()
-                .orElseThrow(() -> new NotFoundException("Restaurants were not found"));
+        return repository.findAll();
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public Restaurant get(@PathVariable int id) {
         log.info("Admin get menu for Restaurant with id={}", id);
-        return repository.getRestaurantWithMenuAndVotesById(id).orElseThrow(
-                () -> new NotFoundException("menu for Restaurant not found"));
+        return repository.getExisted(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void delete(@PathVariable int id) {
         log.info("Admin delete Restaurant with id={}", id);
         repository.deleteExisted(id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @CacheEvict(value = "restaurants", allEntries = true)
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("Admin create {}", restaurant);
         checkNew(restaurant);
@@ -69,6 +67,7 @@ public class AdminRestaurantController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("Admin update {} with id={}", restaurant, id);
         assureIdConsistent(restaurant, id);

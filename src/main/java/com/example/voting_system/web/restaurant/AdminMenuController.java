@@ -1,25 +1,27 @@
 package com.example.voting_system.web.restaurant;
 
-import com.example.voting_system.model.restaurant.Dish;
+import com.example.voting_system.error.NotFoundException;
+import com.example.voting_system.model.restaurant.Menu;
 import com.example.voting_system.model.restaurant.Restaurant;
-import com.example.voting_system.repository.DishRepository;
-import com.example.voting_system.repository.RestaurantRepository;
-import com.example.voting_system.to.DishTo;
+import com.example.voting_system.repository.MenuRepository;
+import com.example.voting_system.to.MenuTo;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.voting_system.web.RestValidation.assureIdConsistent;
 import static com.example.voting_system.web.RestValidation.checkNew;
 import static com.example.voting_system.web.restaurant.AdminRestaurantController.REST_URL;
 
@@ -28,7 +30,7 @@ import static com.example.voting_system.web.restaurant.AdminRestaurantController
  * Controller for handling administrative operations related to restaurant menus.
  *
  * <p>The controller provides endpoints for retrieving, adding, updating, and removing dishes from a restaurant's menu.
- * All operations are performed under the "/api/restaurants/{restaurantId}/menu" base URL.
+ * All operations are performed under the "/api/restaurants/{restaurantId}/menus" base URL.
  */
 @RestController
 @RequestMapping(value = AdminMenuController.REST_URL_MENU, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,68 +38,73 @@ import static com.example.voting_system.web.restaurant.AdminRestaurantController
 @Slf4j
 @Transactional(readOnly = true)
 public class AdminMenuController {
-    static final String REST_URL_MENU = REST_URL + "/{restaurantId}/menu";
+    static final String REST_URL_MENU = REST_URL + "/{restaurantId}/menus";
 
-    private RestaurantRepository restaurantRepository;
-    private DishRepository dishRepository;
+    private MenuRepository menuRepository;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<DishTo> getMenu(@PathVariable int restaurantId) {
-        Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
-        return restaurant.getMenu().stream()
-                .map(this::getTo)
+    public List<MenuTo> getAllMenus(@PathVariable int restaurantId) {
+        log.info("Admin getAll Menus for Restaurant with id={}", restaurantId);
+        List<Menu> menus = menuRepository.findAllByRestaurantId(restaurantId);
+        return menus.stream()
+                .map(this::getMenuTo)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public DishTo getDishInMenu(@PathVariable int id, @PathVariable String restaurantId) {
-        log.info("get Dish with id={} in menu for Restaurant with id={}", id, restaurantId);
-        return getTo(dishRepository.getExisted(id));
+    @GetMapping("/{menuDate}")
+    public MenuTo getMenuByDate(@PathVariable int restaurantId, @PathVariable LocalDate menuDate) {
+        log.info("Admin get Menu for Restaurant with id={} on date {}", restaurantId, menuDate);
+        Menu menu = menuRepository.findByRestaurantIdAndMenuDate(restaurantId, menuDate)
+                .orElseThrow(() -> new NotFoundException("Menu not found for Restaurant with id=" + restaurantId + " on date " + menuDate));
+        return getMenuTo(menu);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{menuDate}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeDishFromMenu(@PathVariable int id, @PathVariable String restaurantId) {
-        log.info("remove Dish with id={} from menu for Restaurant with id={}", id, restaurantId);
-        dishRepository.deleteExisted(id);
+    @CacheEvict(value = "restaurants", key = "#restaurantId")
+    public void deleteMenu(@PathVariable int restaurantId, @PathVariable LocalDate menuDate) {
+        log.info("Admin delete Menu for Restaurant with id={} on date {}", restaurantId, menuDate);
+        menuRepository.findByRestaurantIdAndMenuDate(restaurantId, menuDate)
+                .ifPresent(menuRepository::delete);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DishTo> addDishToMenu(@Valid @RequestBody Dish dish, @PathVariable String restaurantId) {
-        log.info("add {} to menu for Restaurant with id={}", dish, restaurantId);
-        checkNew(dish);
-
-        int id = Integer.parseInt(restaurantId);
-
-        Restaurant restaurant = restaurantRepository.getExisted(id);
-        assureIdConsistent(restaurant, id);
-
-        dish.setRestaurant(restaurant);
-
-        Dish created = dishRepository.save(dish);
+    @CacheEvict(value = "restaurants", key = "#restaurantId")
+    public ResponseEntity<Menu> createMenu(@PathVariable int restaurantId, @Valid @RequestBody Menu menu) {
+        log.info("Admin create Menu for Restaurant with id={}", restaurantId);
+        checkNew(menu);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(restaurantId);
+        menu.setRestaurant(restaurant);
+        Menu created = menuRepository.save(menu);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{restaurantId}" + "/menu" + "/{id}")
+                .path(REST_URL_MENU + "/{menuId}")
                 .buildAndExpand(restaurantId, created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(getTo(created));
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateDishInMenu(@Valid @RequestBody Dish dish, @PathVariable int id, @PathVariable String restaurantId) {
-        log.info("update {} with id={} in menu for Restaurant with id={}", dish, id, restaurantId);
-        assureIdConsistent(dish, id);
-        dishRepository.save(dish);
+    @CacheEvict(value = "restaurants", key = "#restaurantId")
+    public void updateMenu(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId, @RequestParam @Nullable LocalDate menuDate) {
+        log.info("Admin update Menu for Restaurant with id={} on date {}", restaurantId, menuDate);
+
+        Menu existingMenu = menuRepository.findByRestaurantIdAndMenuDate(restaurantId, menuDate)
+                .orElseThrow(() -> new NotFoundException("Menu not found for Restaurant with id=" + restaurantId + " on date " + menuDate));
+
+        existingMenu.setMenuDate(menuTo.getMenuDate());
+        existingMenu.setMenuItems(menuTo.getMenuItems());
+
+        menuRepository.save(existingMenu);
     }
 
     /**
-     * Converts a Dish entity to a DishTo transfer object.
+     * Converts a Menu entity to a MenuTo transfer object.
      *
-     * @param dish The Dish entity to be converted.
-     * @return A DishTo object containing relevant dish details.
+     * @param menu The Menu entity to be converted.
+     * @return A MenuTo object containing relevant menu details.
      */
-    private DishTo getTo(Dish dish) {
-        return new DishTo(dish.id(), dish.getName(), dish.getPrice());
+    private MenuTo getMenuTo(Menu menu) {
+        return new MenuTo(menu.id(), menu.getMenuDate(), menu.getMenuItems());
     }
 }
