@@ -1,10 +1,6 @@
 package com.example.voting_system.web.restaurant;
 
-import com.example.voting_system.model.restaurant.Vote;
-import com.example.voting_system.repository.VoteRepository;
-import com.example.voting_system.util.JsonUtil;
 import com.example.voting_system.web.AbstractControllerTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,52 +15,48 @@ import static com.example.voting_system.web.restaurant.UserVoteController.REST_U
 import static com.example.voting_system.web.user.UserTestData.GUEST_MAIL;
 import static com.example.voting_system.web.user.UserTestData.USER_MAIL;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class UserVoteControllerTest extends AbstractControllerTest {
 
     @Autowired
-    private VoteRepository voteRepository;
+    private UserVoteController voteController;
 
     @Test
     @WithUserDetails(value = GUEST_MAIL)
     void vote() throws Exception {
-        Vote vote = getNewVote();
-
-        perform(MockMvcRequestBuilders.patch(REST_URL + "/" + RESTAURANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(vote)))
-                .andDo(print())
+        perform(MockMvcRequestBuilders.patch(REST_URL + "/{id}", RESTAURANT_ID)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        int expectedRating = restaurantTo1.getRating() + 1;
-        int actualRating = voteRepository.countByRestaurantIdAndVoteDate(RESTAURANT_ID, LocalDate.now()).orElse(0);
-
-        Assertions.assertEquals(expectedRating, actualRating);
+        perform(MockMvcRequestBuilders.get(REST_URL + "/votes/today"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.restaurantId").value(RESTAURANT_ID));
     }
 
     @Test
     @WithUserDetails(value = USER_MAIL)
     void reVote() throws Exception {
-        Vote vote = getUpdatedVote();
+        voteController.setEndVotingTime(LocalTime.MAX);
 
-        perform(MockMvcRequestBuilders.patch(REST_URL + "/" + RESTAURANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(vote)))
-                .andDo(print())
+        perform(MockMvcRequestBuilders.patch(REST_URL + "/{id}", RESTAURANT_ID + 1)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        int expectedRestaurant1Rating = restaurantTo1.getRating() + 1;
-        int actualRestaurant1Rating = voteRepository.countByRestaurantIdAndVoteDate(RESTAURANT_ID, LocalDate.now()).orElse(0);
+        perform(MockMvcRequestBuilders.get(REST_URL + "/votes/today"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.restaurantId").value(RESTAURANT_ID + 1));
+    }
 
-        Assertions.assertEquals(expectedRestaurant1Rating, actualRestaurant1Rating);
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void reVoteAfterDeadline() throws Exception {
 
-        int expectedRestaurant4Rating = restaurantTo4.getRating() - 1;
-        int actualRestaurant4Rating = voteRepository.countByRestaurantIdAndVoteDate(RESTAURANT_ID + 3, LocalDate.now()).orElse(0);
+        voteController.setEndVotingTime(LocalTime.MIN);
 
-        Assertions.assertEquals(expectedRestaurant4Rating, actualRestaurant4Rating);
+        perform(MockMvcRequestBuilders.patch(REST_URL + "/{id}", RESTAURANT_ID + 1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -73,6 +65,6 @@ class UserVoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo1, restaurantTo3, restaurantTo4));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo1, restaurantTo2));
     }
 }
