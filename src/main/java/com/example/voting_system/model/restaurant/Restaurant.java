@@ -21,9 +21,6 @@ import java.util.*;
 @ToString(exclude = {"votes", "menus"})
 public class Restaurant extends NamedEntity {
 
-    @Column(unique = true)
-    private String name;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
