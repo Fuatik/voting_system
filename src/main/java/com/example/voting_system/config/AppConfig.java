@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,6 @@ import org.springframework.http.ProblemDetail;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.Map;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
@@ -30,6 +30,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @Slf4j
 @EnableCaching
 public class AppConfig {
+    @Getter
     private final Environment env;
 
     @Value("${voting.end-time:11:00}")
@@ -49,12 +50,8 @@ public class AppConfig {
 
     @Bean
     public LocalTime endVotingTime() {
-            if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
-                return LocalTime.now().plusHours(1);
-            } else {
-                long minutes = Long.parseLong(endVotingTimeString);
-                return LocalTime.MIN.plus(Duration.ofMinutes(minutes));
-            }
+        long minutes = Long.parseLong(endVotingTimeString);
+        return LocalTime.MIN.plus(Duration.ofMinutes(minutes));
     }
 
     //   https://stackoverflow.com/a/74630129/548473

@@ -35,13 +35,13 @@ import java.util.Optional;
 
 import static com.example.voting_system.error.ErrorType.*;
 
+@Getter
 @RestControllerAdvice
 @AllArgsConstructor
 @Slf4j
 public class RestExceptionHandler {
     public static final String ERR_PFX = "ERR# ";
 
-    @Getter
     private final MessageSource messageSource;
 
     //    https://stackoverflow.com/a/52254601/548473
